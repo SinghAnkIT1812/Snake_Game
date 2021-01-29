@@ -1,2 +1,2 @@
 # Snake_Game
-Snake Game with Python Turtle Graphics
+Snake Game with Python 
