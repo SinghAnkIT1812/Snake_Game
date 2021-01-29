@@ -1,122 +1,103 @@
-import turtle
+import pygame
 import random
 
-w = 500
-h = 500
-fs = 10
-d = 100  # milliseconds
+pygame.init()
 
-offsets = {
-    "up": (0, 20),
-    "down": (0, -20),
-    "left": (-20, 0),
-    "right": (20, 0)
-}
+# Colors
+white = (255, 255, 255)
+red = (255, 0, 0)
+black = (0, 0, 0)
 
-def r():
-    global saap, kata, khanaT, pen
-    saap = [[0, 0], [0, 20], [0, 40], [0, 60], [0, 80]]
-    kata = "up"
-    khanaT = nun()
-    food.goto(khanaT)
-    hall()
+# Creating window
+screen_width = 900
+screen_height = 600
+gameWindow = pygame.display.set_mode((screen_width, screen_height))
 
-def hall():
-    global kata
+# Game Title
+pygame.display.set_caption("Nokia-Sarp")
+pygame.display.update()
 
-    new_head = saap[-1].copy()
-    new_head[0] = saap[-1][0] + offsets[kata][0]
-    new_head[1] = saap[-1][1] + offsets[kata][1]
+# Game specific variables
+exit_game = False
+game_over = False
+snake_x = 45
+snake_y = 55
+velocity_x = 0
+velocity_y = 0
 
-    if new_head in saap[:-1]:  
-        r()
-    else:
-        saap.append(new_head)
+food_x = random.randint(20, screen_width/2)
+food_y = random.randint(20, screen_height/2)
+score = 0
+init_velocity = 5
+snake_size = 30
+fps = 60
 
-        if not khana():
-            saap.pop(0)  
+clock = pygame.time.Clock()
+font = pygame.font.SysFont(None, 55)
 
-        if saap[-1][0] > w / 2:
-            saap[-1][0] -= w
-        elif saap[-1][0] < - w / 2:
-            saap[-1][0] += w
-        elif saap[-1][1] > h / 2:
-            saap[-1][1] -= h
-        elif saap[-1][1] < -h / 2:
-            saap[-1][1] += h
 
-        pen.clearstamps()
- #clears all the stamps
+def text_screen(text, color, x, y):
+    screen_text = font.render(text, True, color)
+    gameWindow.blit(screen_text, [x, y])
 
-        for segment in saap:
-            pen.goto(segment[0], segment[1])
-            pen.stamp()
 
-        screen.update()
- #updates the turtle.screen screen
+def plot_snake(gameWindow, color, snk_list, snake_size):
+    for x, y in snk_list:
+        pygame.draw.rect(gameWindow, color, [x, y, snake_size, snake_size])
 
-        turtle.ontimer(hall, d)
 
-def khana():
-    global khanaT
-    if dist(saap[-1], khanaT) < 20:
-        khanaT = nun()
-        food.goto(khanaT)
-        return True
-    return False
+snk_list = []
+snk_length = 1
 
-def nun():
-    x = random.randint(- w / 2 + fs, w / 2 - fs)
-    y = random.randint(- h / 2 + fs, h / 2 - fs)
-    return (x, y)
+# Game Loop
+while not exit_game:
 
-def dist(poos1, poos2):
-    x1, y1 = poos1
-    x2, y2 = poos2
-    distance = ((y2 - y1) ** 2 + (x2 - x1) ** 2) ** 0.5
-    return distance
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit_game = True
 
-def mathi():
-    global kata
-    if kata != "down":
-        kata = "up"
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                velocity_x = init_velocity
+                velocity_y = 0
 
-def go_right():
-    global kata
-    if kata != "left":
-        kata = "right"
+            if event.key == pygame.K_LEFT:
+                velocity_x = - init_velocity
+                velocity_y = 0
 
-def go_down():
-    global kata
-    if kata != "up":
-        kata = "down"
+            if event.key == pygame.K_UP:
+                velocity_y = - init_velocity
+                velocity_x = 0
 
-def go_left():
-    global kata
-    if kata != "right":
-        kata = "left"
+            if event.key == pygame.K_DOWN:
+                velocity_y = init_velocity
+                velocity_x = 0
 
-screen = turtle.Screen()
-screen.setup(w, h)
-screen.title("saap")
-screen.bgcolor("green")
-screen.setup(500, 500)
-screen.tracer(0)
+    snake_x = snake_x + velocity_x
+    snake_y = snake_y + velocity_y
 
-pen = turtle.Turtle("square")
-pen.penup()
+    if abs(snake_x - food_x) < 6 and abs(snake_y - food_y) < 6:
+        score += 1
+        food_x = random.randint(20, screen_width / 2)
+        food_y = random.randint(20, screen_height / 2)
+        snk_length += 5
 
-food = turtle.Turtle()
-food.shape("circle")
-food.color("white")
-food.shapesize(fs / 20) 
-food.penup()
+    gameWindow.fill(white)
+    text_screen("Score: " + str(score * 10), red, 5, 5)
+    pygame.draw.rect(gameWindow, red, [food_x, food_y, snake_size, snake_size])
 
-screen.listen()
-screen.onkey(mathi, "Up")
-screen.onkey(go_right, "Right")
-screen.onkey(go_down, "Down")
-screen.onkey(go_left, "Left")
+    head = []
+    head.append(snake_x)
+    head.append(snake_y)
+    snk_list.append(head)
 
-r()
-turtle.done()
+    if len(snk_list) > snk_length:
+        del snk_list[0]
+
+    plot_snake(gameWindow, black, snk_list, snake_size)
+    pygame.display.update()
+    clock.tick(fps)
+
+pygame.quit()
+
+quit()
