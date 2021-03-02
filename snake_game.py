@@ -8,7 +8,7 @@ white = (255, 255, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
 
-# Creating window
+# Creating window for game
 screen_width = 900
 screen_height = 600
 
