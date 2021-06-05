@@ -2,24 +2,17 @@ import pygame
 import random
 
 pygame.init()
-
 # Colors
 white = (255, 255, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
-
 # Creating window for game
 screen_width = 900
 screen_height = 600
-
 gameWindow = pygame.display.set_mode((screen_width, screen_height))
-
-
-
 # Game Title
 pygame.display.set_caption("Nokia-Sarp")
 pygame.display.update()
-
 # Game specific variables
 exit_game = False
 game_over = False
@@ -27,22 +20,17 @@ snake_x = 45
 snake_y = 55
 velocity_x = 0
 velocity_y = 0
-
 food_x = random.randint(20, screen_width/2)
 food_y = random.randint(20, screen_height/2)
 score = 0
 init_velocity = 5
 snake_size = 30
 fps = 60
-
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 55)
-
-
 def text_screen(text, color, x, y):
     screen_text = font.render(text, True, color)
     gameWindow.blit(screen_text, [x, y])
-
 
 def plot_snake(gameWindow, color, snk_list, snake_size):
     for x, y in snk_list:
@@ -51,7 +39,6 @@ def plot_snake(gameWindow, color, snk_list, snake_size):
 
 snk_list = []
 snk_length = 1
-
 # Game Loop
 while not exit_game:
 
